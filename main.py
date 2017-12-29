@@ -13,7 +13,7 @@ tknzr = TweetTokenizer()
 tokenizedTweets = [tknzr.tokenize(i) for i in tweets]
 print("Tokenized Tweets: ", tokenizedTweets)
 
-#remove stop words (to get these stopwords open python console and run:
+#remove stop words (to get these stopwords uncomment the following lines (only has to be run once)
 #import nltk
 #nltk.download("stopwords")
 stopwords = stopwords.words('english')
