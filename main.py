@@ -35,5 +35,6 @@ print("Stemmed Tweets: ", stemmedTweets)
 #http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 #http://scikit-learn.org/stable/auto_examples/text/document_clustering.html#sphx-glr-auto-examples-text-document-clustering-py
 
-#vectorizer = TfidfVectorizer(max_df=0.5, max_features=10000, min_df=2, stop_words='english', use_idf=True)
+vectorizer = TfidfVectorizer(max_df=0.5, max_features=10000, min_df=2, stop_words='english', use_idf=True)
 #result = vectorizer.fit_transform(stemmedTweets)
+# result = [vectorizer.fit_transform(tweet) for tweet in stemmedTweets]
