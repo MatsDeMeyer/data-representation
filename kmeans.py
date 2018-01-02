@@ -1,3 +1,19 @@
+import numpy as np
+
+#k-means clustering
+def euclidean_vectorized(A, B):
+    n, d = A.shape
+    m, d1 = B.shape
+    A = A.toarray()
+    B = B.toarray()
+
+    assert d == d1, 'Incompatible shape'
+    A_squared = np.sum(np.square(A), axis=1, keepdims=True)
+    B_squared = np.sum(np.square(B), axis=1, keepdims=True)
+    AB = np.matmul(A, B.T)
+    distances = np.sqrt(A_squared - 2 * AB + B_squared.T)
+    return distances
+
 # X: data matrix of size (n_samples,n_features)
 # n_clusters: number of clusters
 # output 1: labels of X with size (n_samples,)
