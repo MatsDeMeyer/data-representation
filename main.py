@@ -48,17 +48,47 @@ tweetsTF = vectorizer.fit_transform(flatstemmedTweets)
 #Creating consensus matrix:
 #process the tweets with several values for k with the k-means algorithm
 #increment the value of the coördinates for each tweet that got clustered together
-consensusMatrix = np.zeros((2001,2001))
+consensusMatrix_K = np.zeros((2001,2001))
 
-for i in range (2,10):
+for i in range (2,12):
     num_clusters = i
     cluster_labels, centroids = kmeans(tweetsTF, num_clusters)
 
     for j in range (1, 2001):
         for k in range (1, 2001):
-            if cluster_labels[j] == cluster_labels[k]:
-                consensusMatrix[j][k] +=1
-                consensusMatrix[k][j] += 1
+            if (cluster_labels[j] == cluster_labels[k]):
+                if i != j:
+                    consensusMatrix_K[j][k] += 1
+                    consensusMatrix_K[k][j] += 1
+                else:
+                    consensusMatrix_K[j][k] += 1
+
+#if tweets didn't cluster together 10% of the time, set position to 0
+consensusMatrix_K[consensusMatrix_K < 1] = 0
+
+#mark tweets with cluster rate lower then threshold as noise
+#determine threshold:
+
+matrix_mean = np.sum(consensusMatrix_K, 1).mean()
+
+kmeans_noise = list()
+
+for i in range (0, consensusMatrix_K.shape[0]):
+    if consensusMatrix_K[i, :].sum() > matrix_mean:
+        kmeans_noise.append(i)
+
+kmeans_noise = np.asarray(kmeans_noise)
+
+print(kmeans_noise)
+print(kmeans_noise.shape)
+#DBScan
 
 
-print(consensusMatrix)
+#Part 3: Clustering
+#first create new matrix of TF-IDF data without the tweets marked as noise
+tweetMatrix = tweetsTF.toarray()
+tweetsTF_K = tweetMatrix[kmeans_noise]
+
+print(tweetsTF_K.shape)
+
+
