@@ -129,7 +129,7 @@ cluster_labels, centroids = kmeans(consensusMatrix_K_filt, 9)
 #9 indexes of most common words will be stored in this list
 index_word = list()
 
-for i in range (0,8):
+for i in range (0,9):
     #indexes of the tweets with a certain number
     index_tweets = np.nonzero(cluster_labels == i)[0]
     #get all those tweets
@@ -142,6 +142,6 @@ for i in range (0,8):
 print(index_word)
 
 words = vectorizer.get_feature_names()
-for i in range (0, 8):
+for i in range (0, 9):
     print(words[index_word[i]])
 
