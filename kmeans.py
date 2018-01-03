@@ -4,8 +4,10 @@ import numpy as np
 def euclidean_vectorized(A, B):
     n, d = A.shape
     m, d1 = B.shape
-    A = A.toarray()
-    B = B.toarray()
+    if not isinstance(A, np.ndarray):
+        A = A.toarray()
+    if not isinstance(B, np.ndarray):
+        B = B.toarray()
 
     assert d == d1, 'Incompatible shape'
     A_squared = np.sum(np.square(A), axis=1, keepdims=True)

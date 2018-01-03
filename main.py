@@ -58,7 +58,7 @@ for i in range (2,12):
     for j in range (1, 2001):
         for k in range (1, 2001):
             if (cluster_labels[j] == cluster_labels[k]):
-                if i != j:
+                if j != k:
                     consensusMatrix_K[j][k] += 1
                     consensusMatrix_K[k][j] += 1
                 else:
@@ -103,6 +103,45 @@ print('Estimated number of clusters: %d' % n_clusters_)
 tweetMatrix = tweetsTF.toarray()
 tweetsTF_K = tweetMatrix[kmeans_noise]
 
-print(tweetsTF_K.shape)
+#Create consensusmatrix for filtered kmeans data
 
+consensusMatrix_K_filt = np.zeros((tweetsTF_K.shape[0],tweetsTF_K.shape[0]))
+
+for i in range (2,12):
+    num_clusters = i
+    cluster_labels, centroids = kmeans(tweetsTF_K, num_clusters)
+
+    for j in range (1, tweetsTF_K.shape[0]):
+        for k in range (1, tweetsTF_K.shape[0]):
+            if (cluster_labels[j] == cluster_labels[k]):
+                if j != k:
+                    consensusMatrix_K_filt[j][k] += 1
+                    consensusMatrix_K_filt[k][j] += 1
+                else:
+                    consensusMatrix_K_filt[j][k] += 1
+
+#finally run kmeans one more time with the consensusmatrix as input
+
+cluster_labels, centroids = kmeans(consensusMatrix_K_filt, 9)
+
+#identify most common words from kmeans
+
+#9 indexes of most common words will be stored in this list
+index_word = list()
+
+for i in range (0,8):
+    #indexes of the tweets with a certain number
+    index_tweets = np.nonzero(cluster_labels == i)[0]
+    #get all those tweets
+    tweets_singleCluster = tweetsTF_K[index_tweets]
+    #check collumn for most important word
+    mostCommon = np.sum(tweets_singleCluster, axis=0).argmax()
+    index_word.append(mostCommon)
+
+
+print(index_word)
+
+words = vectorizer.get_feature_names()
+for i in range (0, 8):
+    print(words[index_word[i]])
 
