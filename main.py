@@ -8,6 +8,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from kmeans import *
+from sklearn.cluster import DBSCAN
 
 #PART 1: Pre-Processing
 #load the csv file
@@ -78,10 +79,23 @@ for i in range (0, consensusMatrix_K.shape[0]):
         kmeans_noise.append(i)
 
 kmeans_noise = np.asarray(kmeans_noise)
-
 print(kmeans_noise)
 print(kmeans_noise.shape)
-#DBScan
+
+#DBScan v0.000001
+# #############################################################################
+# Compute DBSCAN
+
+db = DBSCAN(eps=0.7, min_samples=3).fit(tweetsTF)
+core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+core_samples_mask[db.core_sample_indices_] = True
+labels = db.labels_
+
+# Number of clusters in labels, ignoring noise if present.
+n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+print('Estimated number of clusters: %d' % n_clusters_)
+
+
 
 
 #Part 3: Clustering
