@@ -45,30 +45,14 @@ print("Stemmed Tweets flattened: ", flatstemmedTweets)
 vectorizer = TfidfVectorizer(min_df=1)
 tweetsTF = vectorizer.fit_transform(flatstemmedTweets)
 
-#DBScan v0.000001
-X = tweetsTF
-
-#minPts set to 10 (constant)
-minPts = 10
-
-#matrix to store results
-dbScanResults = np.zeros((len(flatstemmedTweets), 35))
-
-#iterate eps from 0.95 to 1.3 in steps of 0.1 (decided based on silhouette score and amount of clusters)
-for i in range(95, 130, 1):
-    eps = i/100
-    core_points, cluster_labels, outliers = dbscan(X, eps, minPts)
-
-    #TODO store results in dbSCANresult matrix, perform check afterwards
-    print("EPS: ", eps)
-    print('%d clusters found' % (len(core_points)))
-    print('%d outlier points detected' % (len(outliers)))
-    # Calculate the shlhouette score
-    if len(core_points) > 1:
-        print('Silhouette score: %f' % silhouette_score(X, cluster_labels))
-    else:
-        print('Cannot evaluate silhouetter score with only one cluster')
-
+#DBScan
+#function using DBSCAN function from scikit-learn
+#tfidf matrix = tweetsTF
+#min_samples = 12
+#eps min = 1.3
+#eps_max = 1.4
+#interval = 0.01 -> goes from 1.3 to 1.4 in steps of 0.01
+dbcanResults = runDBSCAN(tweetsTF, 12, 1.3, 1.4, 0.01)
 
 ##K-MEANS
 #Creating consensus matrix:
