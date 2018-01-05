@@ -9,6 +9,9 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from kmeans import *
 from sklearn.cluster import DBSCAN
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
+from dbscan import *
 
 #PART 1: Pre-Processing
 #load the csv file
@@ -33,19 +36,41 @@ st = SnowballStemmer("english")
 stemmedTweets = [[st.stem(word) for word in tweet if word not in stopwords] for tweet in tokenizedTweets]
 print("Stemmed Tweets: ", stemmedTweets)
 
-#PART 2: Noise Removal
-#TF-IDF
-#http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
-#http://scikit-learn.org/stable/auto_examples/text/document_clustering.html#sphx-glr-auto-examples-text-document-clustering-py
-
-#vectorizer = TfidfVectorizer(max_df=0.99, max_features=10000, min_df=2, stop_words='english', use_idf=True)
-
 flatstemmedTweets = [" ".join(tweets) for tweets in stemmedTweets]
 print("Stemmed Tweets flattened: ", flatstemmedTweets)
 
+#PART 2: Noise Removal
+
+#TF-IDF representation
 vectorizer = TfidfVectorizer(min_df=1)
 tweetsTF = vectorizer.fit_transform(flatstemmedTweets)
 
+#DBScan v0.000001
+X = tweetsTF
+
+#minPts set to 10 (constant)
+minPts = 10
+
+#matrix to store results
+dbScanResults = np.zeros((len(flatstemmedTweets), 35))
+
+#iterate eps from 0.95 to 1.3 in steps of 0.1 (decided based on silhouette score and amount of clusters)
+for i in range(95, 130, 1):
+    eps = i/100
+    core_points, cluster_labels, outliers = dbscan(X, eps, minPts)
+
+    #TODO store results in dbSCANresult matrix, perform check afterwards
+    print("EPS: ", eps)
+    print('%d clusters found' % (len(core_points)))
+    print('%d outlier points detected' % (len(outliers)))
+    # Calculate the shlhouette score
+    if len(core_points) > 1:
+        print('Silhouette score: %f' % silhouette_score(X, cluster_labels))
+    else:
+        print('Cannot evaluate silhouetter score with only one cluster')
+
+
+##K-MEANS
 #Creating consensus matrix:
 #process the tweets with several values for k with the k-means algorithm
 #increment the value of the coördinates for each tweet that got clustered together
@@ -82,18 +107,7 @@ kmeans_noise = np.asarray(kmeans_noise)
 print(kmeans_noise)
 print(kmeans_noise.shape)
 
-#DBScan v0.000001
-# #############################################################################
-# Compute DBSCAN
 
-db = DBSCAN(eps=0.7, min_samples=3).fit(tweetsTF)
-core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-core_samples_mask[db.core_sample_indices_] = True
-labels = db.labels_
-
-# Number of clusters in labels, ignoring noise if present.
-n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-print('Estimated number of clusters: %d' % n_clusters_)
 
 
 
