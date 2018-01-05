@@ -52,7 +52,13 @@ tweetsTF = vectorizer.fit_transform(flatstemmedTweets)
 #eps min = 1.3
 #eps_max = 1.4
 #interval = 0.01 -> goes from 1.3 to 1.4 in steps of 0.01
-dbcanResults = runDBSCAN(tweetsTF, 12, 1.3, 1.4, 0.01)
+dbscanResults = runDBSCAN(tweetsTF, 12, 1.3, 1.4, 0.01)
+
+dbscanNoiseIndices = getNoiseIndices(dbscanResults)
+print("DBSCAN Noiseindices: ", dbscanNoiseIndices)
+
+dbscanCleanTweets = removeNoiseTweets(flatstemmedTweets, dbscanNoiseIndices)
+print("First 20 Cleaned Tweets by DBSCAN: ", dbscanCleanTweets[0:20])
 
 ##K-MEANS
 #Creating consensus matrix:

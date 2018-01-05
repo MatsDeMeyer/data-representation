@@ -35,7 +35,7 @@ def runDBSCAN(tfidf_matrix, min_samples, eps_min, eps_max, interval):
 
         # Completing the noise decision matrix
         if eps > eps_min:
-            resultMatrix=np.hstack((resultMatrix,noise_decision_labels))
+            resultMatrix = np.hstack((resultMatrix, noise_decision_labels))
         else:
             resultMatrix = noise_decision_labels
 
@@ -43,3 +43,29 @@ def runDBSCAN(tfidf_matrix, min_samples, eps_min, eps_max, interval):
     print(resultMatrix[:10, :10])
     print('############################################################################################')
     return resultMatrix
+
+#Get indices of noisy tweets
+def getNoiseIndices(dbscanResults):
+    #threshold at 50% (>50% border or noise point = noisy tweet)
+    threshold = 0.5
+    #amount of runs =
+    runs = dbscanResults.shape[1]
+    #get amount of border points
+    borderTweets = (runs - np.count_nonzero(dbscanResults, axis=1))/runs
+    #add 1 to every value, sets all noise tweets to 0
+    dbscanResults = dbscanResults+1
+    #get amount of noise points
+    noiseTweets = (runs - np.count_nonzero(dbscanResults, axis=1))/runs
+    noiseMask = np.hstack((noiseTweets, borderTweets))
+    #get indices where amount of noise or border > threshold
+    noiseIndices = np.nonzero(noiseMask > threshold)[0]
+    #amount of noisy tweets
+    n_noise = len(noiseIndices)
+    print(n_noise, ' noise tweets detected with dbscan')
+    return noiseIndices
+
+#Remove noisy tweets from tweet set
+def removeNoiseTweets(tweetsToClean, noiseIndices):
+    cleanedTweets =np.delete(tweetsToClean, noiseIndices, 0)
+    print('After removing the noisy tweets, %d tweets remain' % len(cleanedTweets))
+    return cleanedTweets
