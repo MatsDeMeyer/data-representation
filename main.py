@@ -97,15 +97,10 @@ kmeans_noise = np.asarray(kmeans_noise)
 print(kmeans_noise)
 print(kmeans_noise.shape)
 
-
-
-
-
-
 #Part 3: Clustering
 #with k-means
 #first create new matrix of TF-IDF data without the tweets marked as noise
-print("KMEANS clustering")
+print("***** KMEANS clustering *****")
 tweetMatrix = tweetsTF.toarray()
 tweetsTF_K = tweetMatrix[kmeans_noise]
 
@@ -150,24 +145,24 @@ print("indices words kmeans", index_word_kmeans)
 
 words = vectorizer.get_feature_names()
 for i in range (0, 9):
-    print("kmeans word: ",words[index_word_kmeans[i]])
+    print(words[index_word_kmeans[i]])
 
 
 #with dbscan
-print("DBSCAN clustering")
+print("***** DBSCAN clustering *****")
 #tfidf representation so we can run k-means
-dbscanCleanTweetsTFIDF = vectorizer.fit_transform(dbscanCleanTweets)
+tweetsTF_dbscan = vectorizer.fit_transform(dbscanCleanTweets)
 
 #Create consensusmatrix for filtered dbscan data
 
-consensusMatrix_K_filt_dbscan = np.zeros((dbscanCleanTweetsTFIDF.shape[0],dbscanCleanTweetsTFIDF.shape[0]))
+consensusMatrix_K_filt_dbscan = np.zeros((tweetsTF_dbscan.shape[0],tweetsTF_dbscan.shape[0]))
 
 for i in range (2,12):
     num_clusters = i
-    cluster_labels, centroids = kmeans(dbscanCleanTweetsTFIDF, num_clusters)
+    cluster_labels, centroids = kmeans(tweetsTF_dbscan, num_clusters)
 
-    for j in range (1, dbscanCleanTweetsTFIDF.shape[0]):
-        for k in range (1, dbscanCleanTweetsTFIDF.shape[0]):
+    for j in range (1, tweetsTF_dbscan.shape[0]):
+        for k in range (1, tweetsTF_dbscan.shape[0]):
             if (cluster_labels[j] == cluster_labels[k]):
                 if j != k:
                     consensusMatrix_K_filt_dbscan[j][k] += 1
@@ -188,7 +183,7 @@ for i in range (0,9):
     #indexes of the tweets with a certain number
     index_tweets = np.nonzero(cluster_labels_dbscan == i)[0]
     #get all those tweets
-    tweets_singleCluster = dbscanCleanTweetsTFIDF[index_tweets]
+    tweets_singleCluster = tweetsTF_dbscan[index_tweets]
     #check collumn for most important word
     mostCommon = np.sum(tweets_singleCluster, axis=0).argmax()
     index_word_dbscan.append(mostCommon)
@@ -197,5 +192,5 @@ for i in range (0,9):
 print("indices words dbscan", index_word_dbscan)
 
 for i in range (0, 9):
-    print("dbscan word:", words[index_word_dbscan[i]])
+    print(words[index_word_dbscan[i]])
 
