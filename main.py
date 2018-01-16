@@ -103,7 +103,9 @@ print(kmeans_noise.shape)
 
 
 #Part 3: Clustering
+#with k-means
 #first create new matrix of TF-IDF data without the tweets marked as noise
+print("KMEANS clustering")
 tweetMatrix = tweetsTF.toarray()
 tweetsTF_K = tweetMatrix[kmeans_noise]
 
@@ -126,26 +128,74 @@ for i in range (2,12):
 
 #finally run kmeans one more time with the consensusmatrix as input
 
-cluster_labels, centroids = kmeans(consensusMatrix_K_filt, 9)
+cluster_labels_kmeans, centroids_kmeans = kmeans(consensusMatrix_K_filt, 9)
+
 
 #identify most common words from kmeans
 
 #9 indexes of most common words will be stored in this list
-index_word = list()
+index_word_kmeans = list()
 
 for i in range (0,9):
     #indexes of the tweets with a certain number
-    index_tweets = np.nonzero(cluster_labels == i)[0]
+    index_tweets = np.nonzero(cluster_labels_kmeans == i)[0]
     #get all those tweets
     tweets_singleCluster = tweetsTF_K[index_tweets]
     #check collumn for most important word
     mostCommon = np.sum(tweets_singleCluster, axis=0).argmax()
-    index_word.append(mostCommon)
+    index_word_kmeans.append(mostCommon)
 
 
-print(index_word)
+print("indices words kmeans", index_word_kmeans)
 
 words = vectorizer.get_feature_names()
 for i in range (0, 9):
-    print(words[index_word[i]])
+    print("kmeans word: ",words[index_word_kmeans[i]])
+
+
+#with dbscan
+print("DBSCAN clustering")
+#tfidf representation so we can run k-means
+dbscanCleanTweetsTFIDF = vectorizer.fit_transform(dbscanCleanTweets)
+
+#Create consensusmatrix for filtered dbscan data
+
+consensusMatrix_K_filt_dbscan = np.zeros((dbscanCleanTweetsTFIDF.shape[0],dbscanCleanTweetsTFIDF.shape[0]))
+
+for i in range (2,12):
+    num_clusters = i
+    cluster_labels, centroids = kmeans(dbscanCleanTweetsTFIDF, num_clusters)
+
+    for j in range (1, dbscanCleanTweetsTFIDF.shape[0]):
+        for k in range (1, dbscanCleanTweetsTFIDF.shape[0]):
+            if (cluster_labels[j] == cluster_labels[k]):
+                if j != k:
+                    consensusMatrix_K_filt_dbscan[j][k] += 1
+                    consensusMatrix_K_filt_dbscan[k][j] += 1
+                else:
+                    consensusMatrix_K_filt_dbscan[j][k] += 1
+
+#finally run kmeans one more time with the consensusmatrix as input
+
+cluster_labels_dbscan, centroids_dbscan = kmeans(consensusMatrix_K_filt_dbscan, 9)
+
+#identify most common words from dbscan
+
+#9 indexes of most common words will be stored in this list
+index_word_dbscan = list()
+
+for i in range (0,9):
+    #indexes of the tweets with a certain number
+    index_tweets = np.nonzero(cluster_labels_dbscan == i)[0]
+    #get all those tweets
+    tweets_singleCluster = dbscanCleanTweetsTFIDF[index_tweets]
+    #check collumn for most important word
+    mostCommon = np.sum(tweets_singleCluster, axis=0).argmax()
+    index_word_dbscan.append(mostCommon)
+
+
+print("indices words dbscan", index_word_dbscan)
+
+for i in range (0, 9):
+    print("dbscan word:", words[index_word_dbscan[i]])
 
