@@ -120,6 +120,27 @@ for i in range (2,12):
                     consensusMatrix_K_filt[k][j] += 1
                 else:
                     consensusMatrix_K_filt[j][k] += 1
+#Get edges
+#if a value in the consensusmatrix exceeds a certain threshold, make it an edges
+
+edges = np.array([[0, 0]])
+threshold = 12
+
+print("check edges")
+for i in range (0,consensusMatrix_K_filt.shape[0]):
+    for j in range(0, np.math.ceil(consensusMatrix_K_filt.shape[0]/2)):
+        if(consensusMatrix_K_filt[i][j])> threshold:
+            edges = np.append(edges, [[i, j]], axis=0)
+
+edges = np.delete(edges, (0), axis=0)
+
+
+
+#print("edges:")
+#print(edges)
+
+#np.savetxt("edges.csv", edges, '%d', delimiter=",")
+
 
 #finally run kmeans one more time with the consensusmatrix as input
 
