@@ -1,18 +1,10 @@
-import csv
-
 import pandas as pd
 import csv_helper
 from nltk.tokenize import TweetTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
-from scipy import sparse
-import numpy as np
-from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from kmeans import *
-from sklearn.cluster import DBSCAN
-from sklearn.metrics import silhouette_score
-import matplotlib.pyplot as plt
 from dbscan import *
 
 #PART 1: Pre-Processing
