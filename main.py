@@ -120,27 +120,6 @@ for i in range (2,12):
                     consensusMatrix_K_filt[k][j] += 1
                 else:
                     consensusMatrix_K_filt[j][k] += 1
-#Get edges
-#if a value in the consensusmatrix exceeds a certain threshold, make it an edges
-
-edges = np.array([[0, 0]])
-threshold = 12
-
-print("check edges")
-for i in range (0,consensusMatrix_K_filt.shape[0]):
-    for j in range(0, np.math.ceil(consensusMatrix_K_filt.shape[0]/2)):
-        if(consensusMatrix_K_filt[i][j])> threshold:
-            edges = np.append(edges, [[i, j]], axis=0)
-
-edges = np.delete(edges, (0), axis=0)
-
-
-
-#print("edges:")
-#print(edges)
-
-#np.savetxt("edges.csv", edges, '%d', delimiter=",")
-
 
 #finally run kmeans one more time with the consensusmatrix as input
 
@@ -172,7 +151,8 @@ for i in range (0, 9):
 #with dbscan
 print("***** DBSCAN clustering *****")
 #tfidf representation so we can run k-means
-tweetsTF_dbscan = vectorizer.fit_transform(dbscanCleanTweets)
+vectorizer_dbscan = TfidfVectorizer(min_df=1)
+tweetsTF_dbscan = vectorizer_dbscan.fit_transform(dbscanCleanTweets)
 
 #Create consensusmatrix for filtered dbscan data
 
@@ -212,6 +192,48 @@ for i in range (0,9):
 
 print("indices words dbscan", index_word_dbscan)
 
+words = vectorizer_dbscan.get_feature_names()
 for i in range (0, 9):
     print(words[index_word_dbscan[i]])
+
+
+#STEP 4: Visualization
+#Get nodes
+
+
+
+
+
+#Get edges
+#if a value in the consensusmatrix exceeds a certain threshold, make it an edges
+
+#kmeans
+edges_kMeans = np.array([[0, 0]])
+threshold = 12
+
+for i in range (0,consensusMatrix_K_filt.shape[0]):
+    for j in range(0, np.math.ceil(consensusMatrix_K_filt.shape[0]/2)):
+        if(consensusMatrix_K_filt[i][j])> threshold:
+            edges_kMeans = np.append(edges_kMeans, [[i, j]], axis=0)
+
+edges_kMeans = np.delete(edges_kMeans, (0), axis=0)
+print("edges kmeans:")
+print(edges_kMeans)
+
+#np.savetxt("edges_kMeans.csv", edges, '%d', delimiter=",")
+
+#dbscan
+edges_DBSCAN = np.array([[0, 0]])
+threshold = 15
+
+for i in range (0,consensusMatrix_K_filt_dbscan.shape[0]):
+    for j in range(0, np.math.ceil(consensusMatrix_K_filt_dbscan.shape[0]/2)):
+        if(consensusMatrix_K_filt_dbscan[i][j])> threshold:
+            edges_DBSCAN = np.append(edges_DBSCAN, [[i, j]], axis=0)
+
+edges_DBSCAN = np.delete(edges_DBSCAN, (0), axis=0)
+print("edges dbscan:")
+print(edges_DBSCAN)
+
+#np.savetxt("edges_DBSCAN.csv", edges, '%d', delimiter=",")
 
