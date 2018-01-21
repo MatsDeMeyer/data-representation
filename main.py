@@ -201,6 +201,7 @@ for i in range (0, 9):
 #STEP 4: Visualization
 #Get nodes
 
+#kmeans
 #get the kmeans tweets
 tweets_kmeans = [flatstemmedTweets[i] for i in kmeans_noise]
 print(tweets_kmeans)
@@ -212,11 +213,12 @@ for i in range(0, kmeans_noise.shape[0]):
 
 
 #stack collums (id, tweet, word from cluster)
-nodes_kmeans = np.c_[kmeans_noise,tweets_kmeans]
-nodes_kmeans = np.c_[nodes_kmeans,words_kmeans]
+nodes_kmeans = np.c_[kmeans_noise,words_kmeans]
+nodes_kmeans = np.c_[nodes_kmeans,tweets_kmeans]
 
 nodes_kmeans_df = pd.DataFrame(nodes_kmeans)
 nodes_kmeans_df.to_csv('nodes_kmeans.csv', index=False, header=False)
+
 
 #Get edges
 #if a value in the consensusmatrix exceeds a certain threshold, make it an edges
