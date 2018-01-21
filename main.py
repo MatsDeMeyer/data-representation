@@ -125,7 +125,6 @@ for i in range (2,12):
 
 cluster_labels_kmeans, centroids_kmeans = kmeans(consensusMatrix_K_filt, 9)
 
-
 #identify most common words from kmeans
 
 #9 indexes of most common words will be stored in this list
@@ -201,7 +200,21 @@ for i in range (0, 9):
 #Get nodes
 
 
+print("necessary info")
+print(cluster_labels_kmeans)
+print(cluster_labels_kmeans.shape)
+print(kmeans_noise)
+print(kmeans_noise.shape)
 
+tweets_kmeans = [flatstemmedTweets[i] for i in kmeans_noise]
+print(tweets_kmeans)
+
+word = list()
+for i in range(0, kmeans_noise.shape[0]):
+    word.append(index_word_kmeans[cluster_labels_kmeans[i]])
+
+print(word)
+print(word.shape)
 
 
 #Get edges
