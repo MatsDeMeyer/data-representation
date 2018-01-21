@@ -1,5 +1,7 @@
-import csv_helper
+import csv
 
+import pandas as pd
+import csv_helper
 from nltk.tokenize import TweetTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
@@ -199,23 +201,22 @@ for i in range (0, 9):
 #STEP 4: Visualization
 #Get nodes
 
-
-print("necessary info")
-print(cluster_labels_kmeans)
-print(cluster_labels_kmeans.shape)
-print(kmeans_noise)
-print(kmeans_noise.shape)
-
+#get the kmeans tweets
 tweets_kmeans = [flatstemmedTweets[i] for i in kmeans_noise]
 print(tweets_kmeans)
 
-word = list()
+#word of the cluster to which each tweet belongs to
+words_kmeans = list()
 for i in range(0, kmeans_noise.shape[0]):
-    word.append(index_word_kmeans[cluster_labels_kmeans[i]])
+    words_kmeans.append(words[index_word_kmeans[cluster_labels_kmeans[i]]])
 
-print(word)
-print(word.shape)
 
+#stack collums (id, tweet, word from cluster)
+nodes_kmeans = np.c_[kmeans_noise,tweets_kmeans]
+nodes_kmeans = np.c_[nodes_kmeans,words_kmeans]
+
+nodes_kmeans_df = pd.DataFrame(nodes_kmeans)
+nodes_kmeans_df.to_csv('nodes_kmeans.csv', index=False, header=False)
 
 #Get edges
 #if a value in the consensusmatrix exceeds a certain threshold, make it an edges
@@ -233,11 +234,11 @@ edges_kMeans = np.delete(edges_kMeans, (0), axis=0)
 print("edges kmeans:")
 print(edges_kMeans)
 
-#np.savetxt("edges_kMeans.csv", edges, '%d', delimiter=",")
+np.savetxt("edges_kMeans.csv", edges_kMeans, '%d', delimiter=",")
 
 #dbscan
 edges_DBSCAN = np.array([[0, 0]])
-threshold = 15
+threshold = 18
 
 for i in range (0,consensusMatrix_K_filt_dbscan.shape[0]):
     for j in range(0, np.math.ceil(consensusMatrix_K_filt_dbscan.shape[0]/2)):
@@ -248,5 +249,5 @@ edges_DBSCAN = np.delete(edges_DBSCAN, (0), axis=0)
 print("edges dbscan:")
 print(edges_DBSCAN)
 
-#np.savetxt("edges_DBSCAN.csv", edges, '%d', delimiter=",")
+np.savetxt("edges_DBSCAN.csv", edges_DBSCAN, '%d', delimiter=",")
 
